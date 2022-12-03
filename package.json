@@ -31,7 +31,7 @@
     "test-dev": "cross-env APP_ENV=test start-server-and-test dev-sqlite 3000 test",
     "test-start": "cross-env APP_ENV=test WS_URL=ws://localhost:3000 start-server-and-test start 3000 test",
     "test": "playwright test",
-    "postinstall": "prisma generate"
+    "postinstall": "npx prisma generate"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
