@@ -27,7 +27,7 @@
     "studio": "prisma studio",
     "lint": "eslint src",
     "lint-fix": "pnpm lint --fix",
-    "postinstall": "npm install"
+    "postinstall": "npx prisma generate"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
