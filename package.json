@@ -38,8 +38,7 @@
   },
   "prettier": {
     "printWidth": 80,
-    "trailingComma": "all",
-    "singleQuote": true
+    "trailingComma": "all"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.5",
