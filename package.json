@@ -1,5 +1,5 @@
 {
-  "name": "@examples/next-websockets-starter",
+  "name": "battelship_trpc",
   "version": "10.4.3",
   "private": true,
   "scripts": {
