@@ -30,14 +30,14 @@ function AddMessageForm({ onMessagePost }: { onMessagePost: () => void }) {
           You have to{' '}
           <button
             className="inline font-bold underline"
-            onClick={() => signIn()}
+            onClick={() => signIn('google')}
           >
             sign in
           </button>{' '}
           to write.
         </p>
         <button
-          onClick={() => signIn()}
+          onClick={() => signIn('google')}
           data-testid="signin"
           className="h-full px-4 bg-indigo-500 rounded"
         >
