@@ -8,9 +8,9 @@
  * @see https://trpc.io/docs/v10/procedures
  */
 
-import { Context } from './context';
-import { initTRPC, TRPCError } from '@trpc/server';
-import superjson from 'superjson';
+import { Context } from "./context";
+import { initTRPC, TRPCError } from "@trpc/server";
+import superjson from "superjson";
 
 const t = initTRPC.context<Context>().create({
   /**
@@ -51,7 +51,7 @@ const isAuthed = middleware(({ next, ctx }) => {
   const user = ctx.session?.user;
 
   if (!user?.name) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' });
+    throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
   return next({

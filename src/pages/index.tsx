@@ -1,13 +1,13 @@
-import { trpc } from '../utils/trpc';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { signIn, signOut, useSession } from 'next-auth/react';
-import Head from 'next/head';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { trpc } from "../utils/trpc";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { signIn, signOut, useSession } from "next-auth/react";
+import Head from "next/head";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 function AddMessageForm({ onMessagePost }: { onMessagePost: () => void }) {
   const addPost = trpc.post.add.useMutation();
   const { data: session } = useSession();
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [enterToPostMessage, setEnterToPostMessage] = useState(true);
   async function postMessage() {
     const input = {
@@ -15,7 +15,7 @@ function AddMessageForm({ onMessagePost }: { onMessagePost: () => void }) {
     };
     try {
       await addPost.mutateAsync(input);
-      setMessage('');
+      setMessage("");
       onMessagePost();
     } catch {}
   }
@@ -27,17 +27,17 @@ function AddMessageForm({ onMessagePost }: { onMessagePost: () => void }) {
     return (
       <div className="flex justify-between w-full px-3 py-2 text-lg text-gray-200 bg-gray-800 rounded">
         <p className="font-bold">
-          You have to{' '}
+          You have to{" "}
           <button
             className="inline font-bold underline"
-            onClick={() => signIn('google')}
+            onClick={() => signIn("google")}
           >
             sign in
-          </button>{' '}
+          </button>{" "}
           to write.
         </p>
         <button
-          onClick={() => signIn('google')}
+          onClick={() => signIn("google")}
           data-testid="signin"
           className="h-full px-4 bg-indigo-500 rounded"
         >
@@ -70,16 +70,16 @@ function AddMessageForm({ onMessagePost }: { onMessagePost: () => void }) {
               name="text"
               autoFocus
               onKeyDown={async (e) => {
-                if (e.key === 'Shift') {
+                if (e.key === "Shift") {
                   setEnterToPostMessage(false);
                 }
-                if (e.key === 'Enter' && enterToPostMessage) {
+                if (e.key === "Enter" && enterToPostMessage) {
                   postMessage();
                 }
                 isTyping.mutate({ typing: true });
               }}
               onKeyUp={(e) => {
-                if (e.key === 'Shift') {
+                if (e.key === "Shift") {
                   setEnterToPostMessage(true);
                 }
               }}
@@ -96,7 +96,7 @@ function AddMessageForm({ onMessagePost }: { onMessagePost: () => void }) {
           </div>
         </fieldset>
         {addPost.error && (
-          <p style={{ color: 'red' }}>{addPost.error.message}</p>
+          <p style={{ color: "red" }}>{addPost.error.message}</p>
         )}
       </form>
     </>
@@ -127,7 +127,7 @@ export default function IndexPage() {
   // fn to add and dedupe new messages onto state
   const addMessages = useCallback((incoming?: Post[]) => {
     setMessages((current) => {
-      const map: Record<Post['id'], Post> = {};
+      const map: Record<Post["id"], Post> = {};
       for (const msg of current ?? []) {
         map[msg.id] = msg;
       }
@@ -152,8 +152,8 @@ export default function IndexPage() {
     }
 
     scrollTargetRef.current.scrollIntoView({
-      behavior: 'smooth',
-      block: 'end',
+      behavior: "smooth",
+      block: "end",
     });
   }, [scrollTargetRef]);
   useEffect(() => {
@@ -166,7 +166,7 @@ export default function IndexPage() {
       addMessages([post]);
     },
     onError(err) {
-      console.error('Subscription error:', err);
+      console.error("Subscription error:", err);
       // we might have missed a message - invalidate cache
       utils.post.infinite.invalidate();
     },
@@ -223,7 +223,7 @@ export default function IndexPage() {
                     <h2 className="text-lg text-gray-200">User information</h2>
                     <ul className="space-y-2">
                       <li className="text-lg">
-                        You&apos;re{' '}
+                        You&apos;re{" "}
                         <input
                           id="name"
                           name="name"
@@ -254,17 +254,17 @@ export default function IndexPage() {
                 className="px-4 py-2 text-white bg-indigo-500 rounded disabled:opacity-40"
               >
                 {isFetchingPreviousPage
-                  ? 'Loading more...'
+                  ? "Loading more..."
                   : hasPreviousPage
-                  ? 'Load More'
-                  : 'Nothing more to load'}
+                  ? "Load More"
+                  : "Nothing more to load"}
               </button>
               <div className="space-y-4">
                 {messages?.map((item) => (
                   <article key={item.id} className=" text-gray-50">
                     <header className="flex space-x-2 text-sm">
                       <h3 className="text-md">
-                        {item.source === 'RAW' ? (
+                        {item.source === "RAW" ? (
                           item.name
                         ) : (
                           <a
@@ -277,9 +277,9 @@ export default function IndexPage() {
                         )}
                       </h3>
                       <span className="text-gray-500">
-                        {new Intl.DateTimeFormat('en-GB', {
-                          dateStyle: 'short',
-                          timeStyle: 'short',
+                        {new Intl.DateTimeFormat("en-GB", {
+                          dateStyle: "short",
+                          timeStyle: "short",
                         }).format(item.createdAt)}
                       </span>
                     </header>
@@ -295,12 +295,12 @@ export default function IndexPage() {
               <AddMessageForm onMessagePost={() => scrollToBottomOfList()} />
               <p className="h-2 italic text-gray-400">
                 {currentlyTyping.length
-                  ? `${currentlyTyping.join(', ')} typing...`
-                  : ''}
+                  ? `${currentlyTyping.join(", ")} typing...`
+                  : ""}
               </p>
             </div>
 
-            {process.env.NODE_ENV !== 'production' && (
+            {process.env.NODE_ENV !== "production" && (
               <div className="hidden md:block">
                 <ReactQueryDevtools initialIsOpen={false} />
               </div>
