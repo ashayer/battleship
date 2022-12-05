@@ -3,8 +3,8 @@ services:
     name: trpc-websockets
     env: node
     plan: free
-    buildCommand: pnpm install && pnpm build
-    startCommand: pnpm start
+    buildCommand: npm install && npm build
+    startCommand: npm start
     healthCheckPath: /api/trpc/healthcheck
     envVars:
       - key: NODE_ENV
