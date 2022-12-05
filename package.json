@@ -3,11 +3,11 @@
   "version": "10.4.3",
   "private": true,
   "scripts": {
-    "build:1-generate": "npx prisma generate",
-    "build:2-migrate": "npx prisma migrate deploy",
+    "build:1-generate": "prisma generate",
+    "build:2-migrate": "prisma migrate deploy",
     "build:3-next": "next build",
     "build:4-server": "tsc --project tsconfig.server.json",
-    "build": "npx run-s build:*",
+    "build": "run-s build:*",
     "generate-sqlite": "prisma generate --schema=./prisma/_sqlite/schema.prisma",
     "migrate-sqlite": "prisma migrate dev --name init --schema=./prisma/_sqlite/schema.prisma",
     "build-sqlite": "run-s generate-sqlite migrate-sqlite build:4-server && next build",
@@ -27,7 +27,7 @@
     "studio": "prisma studio",
     "lint": "eslint src",
     "lint-fix": "pnpm lint --fix",
-    "postinstall": "npx prisma generate"
+    "postinstall": "prisma generate"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
