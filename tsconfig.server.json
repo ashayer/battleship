@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
-    "outDir": "./dist/",
+    "outDir": ".=/dist",
     "target": "ES2019",
     "lib": ["ES2019", "DOM"],
     "isolatedModules": false,
