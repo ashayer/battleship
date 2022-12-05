@@ -4,7 +4,7 @@ services:
     env: node
     plan: free
     buildCommand: npm install && npm build
-    startCommand: pnpm start
+    startCommand: npm start
     healthCheckPath: /api/trpc/healthcheck
     envVars:
       - key: NODE_ENV
