@@ -109,14 +109,17 @@ export default function RoomsList() {
     <div>
       <div className="text-center">
         <CreateRoomForm createRoom={createRoom} />
-        <button onClick={() => listOfRooms.refetch()} className="btn my-4">
-          Refresh rooms list
+        <button
+          onClick={() => listOfRooms.refetch()}
+          className={`btn my-4 btn-accent ${listOfRooms.isRefetching && "loading"}`}
+        >
+          {!listOfRooms.isFetching && "Refresh rooms list"}
         </button>
       </div>
       <main className="m-auto mt-6 grid sm:w-8/12 2xl:grid-cols-2">
         {listOfRooms.data?.map((room) => (
-          <div key={room.id}>
-            <section className="">
+          <div key={room.id} className="border">
+            <section>
               <span>
                 <p>
                   <span>Room Name: </span>
@@ -178,7 +181,13 @@ export default function RoomsList() {
                 JOIN
               </button>
             )}
-            <Image src={room.createdByImage as string} alt="Profile image" width={50} height={50} />
+            <Image
+              src={room.createdByImage as string}
+              alt="Profile image"
+              width={50}
+              height={50}
+              className="rounded-full"
+            />
           </div>
         ))}
       </main>
