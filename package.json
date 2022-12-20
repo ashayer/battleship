@@ -55,6 +55,7 @@
     "node-fetch": "^2.6.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.7.1",
     "superjson": "^1.7.4",
     "tsx": "^3.9.0",
     "ws": "^8.0.0",
@@ -62,7 +63,6 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.26.1",
-    "@tailwindcss/typography": "^0.5.8",
     "@tanstack/react-query-devtools": "^4.3.8",
     "@types/node": "^18.7.20",
     "@types/node-fetch": "^2.5.11",

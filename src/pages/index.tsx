@@ -16,14 +16,10 @@ export default function IndexPage() {
         <title>Battleship</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="prose border">
-        <h1>Rooms list</h1>
+      <main className="">
+        <h1 className="text-center my-6 text-5xl font-bold">Rooms list</h1>
 
-        <div>
-          <>
-            <RoomsList />
-          </>
-        </div>
+        <RoomsList />
       </main>
     </>
   );
