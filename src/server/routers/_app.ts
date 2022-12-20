@@ -3,6 +3,7 @@
  */
 import { router, publicProcedure } from "../trpc";
 import { chatRouter } from "./chatRouter";
+import { roomsRouter } from "./roomRouter";
 import { observable } from "@trpc/server/observable";
 import { clearInterval } from "timers";
 
@@ -10,6 +11,7 @@ export const appRouter = router({
   healthcheck: publicProcedure.query(() => "yay!"),
 
   chat: chatRouter,
+  rooms: roomsRouter,
 
   randomNumber: publicProcedure.subscription(() => {
     return observable<number>((emit) => {

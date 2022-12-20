@@ -3,8 +3,13 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import { useCallback, useEffect, useRef, useState } from "react";
+import RoomsList from "components/RoomsList";
 
 export default function IndexPage() {
+  const { data: session } = useSession();
+
+  console.log();
+
   return (
     <>
       <Head>
@@ -15,9 +20,10 @@ export default function IndexPage() {
         <h1>Rooms list</h1>
 
         <div>
-          
+          <>
+            <RoomsList />
+          </>
         </div>
-
       </main>
     </>
   );
