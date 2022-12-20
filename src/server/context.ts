@@ -1,9 +1,9 @@
-import * as trpc from "@trpc/server";
-import * as trpcNext from "@trpc/server/adapters/next";
-import { NodeHTTPCreateContextFnOptions } from "@trpc/server/adapters/node-http";
-import { IncomingMessage } from "http";
-import { getSession } from "next-auth/react";
-import ws from "ws";
+import * as trpc from '@trpc/server';
+import * as trpcNext from '@trpc/server/adapters/next';
+import { NodeHTTPCreateContextFnOptions } from '@trpc/server/adapters/node-http';
+import { IncomingMessage } from 'http';
+import { getSession } from 'next-auth/react';
+import ws from 'ws';
 
 /**
  * Creates context for an incoming request
@@ -16,7 +16,7 @@ export const createContext = async (
 ) => {
   const session = await getSession(opts);
 
-  console.log("createContext for", session?.user?.name ?? "unknown user");
+  console.log('createContext for', session?.user?.name ?? 'unknown user');
 
   return {
     session,
