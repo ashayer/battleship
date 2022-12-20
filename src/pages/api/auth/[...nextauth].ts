@@ -1,23 +1,23 @@
-import NextAuth from 'next-auth';
-import { AppProviders } from 'next-auth/providers';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import GithubProvider from 'next-auth/providers/github';
+import NextAuth from "next-auth";
+import { AppProviders } from "next-auth/providers";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GithubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { prisma } from "../../../utils/client";
 
-let useMockProvider = process.env.NODE_ENV === 'test';
+let useMockProvider = process.env.NODE_ENV === "test";
 const { GITHUB_CLIENT_ID, GITHUB_SECRET, NODE_ENV, APP_ENV } = process.env;
-if (
-  (NODE_ENV !== 'production' || APP_ENV === 'test') &&
-  (!GITHUB_CLIENT_ID || !GITHUB_SECRET)
-) {
-  console.log('⚠️ Using mocked GitHub auth correct credentials were not added');
+if ((NODE_ENV !== "production" || APP_ENV === "test") && (!GITHUB_CLIENT_ID || !GITHUB_SECRET)) {
+  console.log("⚠️ Using mocked GitHub auth correct credentials were not added");
   useMockProvider = true;
 }
 const providers: AppProviders = [];
 if (useMockProvider) {
   providers.push(
     CredentialsProvider({
-      id: 'github',
-      name: 'Mocked GitHub',
+      id: "github",
+      name: "Mocked GitHub",
       async authorize(credentials) {
         if (credentials) {
           const user = {
@@ -30,18 +30,15 @@ if (useMockProvider) {
         return null;
       },
       credentials: {
-        name: { type: 'test' },
+        name: { type: "test" },
       },
     }),
   );
 } else {
-  if (!GITHUB_CLIENT_ID || !GITHUB_SECRET) {
-    throw new Error('GITHUB_CLIENT_ID and GITHUB_SECRET must be set');
-  }
   providers.push(
     GithubProvider({
-      clientId: GITHUB_CLIENT_ID,
-      clientSecret: GITHUB_SECRET,
+      clientId: GITHUB_CLIENT_ID as string,
+      clientSecret: GITHUB_SECRET as string,
       profile(profile) {
         return {
           id: profile.id,
@@ -52,8 +49,23 @@ if (useMockProvider) {
       },
     }),
   );
+  providers.push(
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_SECRET as string,
+    }),
+  );
 }
 export default NextAuth({
   // Configure one or more authentication providers
   providers,
+  adapter: PrismaAdapter(prisma),
+  callbacks: {
+    session({ session, user }) {
+      if (session.user) {
+        session.user.id = user.id;
+      }
+      return session;
+    },
+  },
 });
