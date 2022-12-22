@@ -62,7 +62,7 @@ const OpponentGameGrid = ({
   return (
     <div className="text-center mx-auto">
       <div
-        className="grid text-center"
+        className="grid text-center "
         style={{
           gridTemplateColumns: "repeat(11, minmax(10px, 50px))",
         }}

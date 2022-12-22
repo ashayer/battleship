@@ -9,6 +9,7 @@ import YourGameGrid from "components/YourGameGrid";
 import OpponentGameGrid from "components/OpponentGameGrid";
 import Unauthenticated from "components/Unauthenticated";
 import Chat from "components/Chat";
+import { RiChat2Fill } from "react-icons/ri";
 
 const RoomPage: NextPage = () => {
   const router = useRouter();
@@ -133,8 +134,6 @@ const RoomPage: NextPage = () => {
 
   const addMove = useCallback((incoming: GameMoves[] | undefined) => {
     setMovesList((current) => {
-      // console.log("incoming", incoming);
-      // console.log("current", current);
       const map: Record<GameMoves["id"], GameMoves> = {};
       for (const move of current ?? []) {
         map[move.id] = move;
@@ -190,16 +189,18 @@ const RoomPage: NextPage = () => {
           <div className="drawer-content">
             <div className="fixed bottom-0 right-0 p-4">
               <label htmlFor="my-drawer-4" className="drawer-button btn btn-primary">
-                Open chat
+                <RiChat2Fill className="h-8 w-8" />
               </label>
             </div>
-            {/*
-            {roomInfoState.turn === session?.user?.id && roomInfoState?.gameStarted && (
-              <div>It is your turn</div>
-            )}
-            {roomInfoState.turn !== session?.user?.id && roomInfoState?.gameStarted && (
-              <>Opponent turn</>
-            )} */}
+            <div className="text-center text-3xl font-bold">
+              {roomInfoState.turn === session?.user?.id && roomInfoState?.gameStarted && (
+                <p>Your turn</p>
+              )}
+              {roomInfoState.turn !== session?.user?.id && roomInfoState?.gameStarted && (
+                <p>Opponent turn</p>
+              )}
+            </div>
+
             <div className="flex flex-col lg:flex-row gap-y-8 gap-x-8 justify-evenly items-center lg:w-11/12 mx-auto p-5 border-2 border-red-500">
               <YourGameGrid movesList={movesList} roomInfoState={roomInfoState} />
               {roomInfoState.gameStarted && (
@@ -210,38 +211,42 @@ const RoomPage: NextPage = () => {
                   changeTheTurn={changeTheTurn}
                 />
               )}
-              {/* Stuff to show the room owner*/}
-              {session?.user?.id === roomInfoState.createdById && (
-                <div>
-                  {roomInfoState.opponentId === null && <div>Waiting for opponent to join...</div>}
-                  {roomInfoState.opponentId !== null &&
-                    !roomInfoState.opponentReady &&
-                    session?.user?.id === roomInfoState.createdById && (
-                      <div>Waiting for {roomInfoState.opponentName} to ready up...</div>
+              <div className={`mx-auto ${roomInfoState.gameStarted ? "hidden" : "block"}`}>
+                {/* Stuff to show the room owner*/}
+                {session?.user?.id === roomInfoState.createdById && (
+                  <div>
+                    {roomInfoState.opponentId === null && (
+                      <div>Waiting for opponent to join...</div>
                     )}
-                  {!roomInfoState.gameStarted &&
-                    roomInfoState.opponentId !== null &&
-                    roomInfoState.opponentReady && (
-                      <button className="btn btn-success" onClick={() => startTheGame(true)}>
-                        Start Game
+                    {roomInfoState.opponentId !== null &&
+                      !roomInfoState.opponentReady &&
+                      session?.user?.id === roomInfoState.createdById && (
+                        <div>Waiting for {roomInfoState.opponentName} to ready up...</div>
+                      )}
+                    {!roomInfoState.gameStarted &&
+                      roomInfoState.opponentId !== null &&
+                      roomInfoState.opponentReady && (
+                        <button className="btn btn-success" onClick={() => startTheGame(true)}>
+                          Start Game
+                        </button>
+                      )}
+                  </div>
+                )}
+
+                {/* Stuff to show the room opponent*/}
+                {session?.user?.id === roomInfoState.opponentId && (
+                  <div>
+                    {!roomInfoState.gameStarted && !roomInfoState.opponentReady && (
+                      <button onClick={() => readyUpPlayer()} className="btn btn-success">
+                        Ready up
                       </button>
                     )}
-                </div>
-              )}
-
-              {/* Stuff to show the room opponent*/}
-              {session?.user?.id === roomInfoState.opponentId && (
-                <div>
-                  {!roomInfoState.gameStarted && !roomInfoState.opponentReady && (
-                    <button onClick={() => readyUpPlayer()} className="btn btn-success">
-                      Ready up
-                    </button>
-                  )}
-                  {!roomInfoState.gameStarted && roomInfoState.opponentReady && (
-                    <div>Waiting for {roomInfoState.createdByName} to start the game...</div>
-                  )}
-                </div>
-              )}
+                    {!roomInfoState.gameStarted && roomInfoState.opponentReady && (
+                      <div>Waiting for {roomInfoState.createdByName} to start the game...</div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div className="drawer-side">

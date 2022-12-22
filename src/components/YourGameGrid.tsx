@@ -113,6 +113,7 @@ const YourGameGrid = ({
                       grid[rowIndex][colIndex] > 0 ? colors[grid[rowIndex][colIndex]] : "",
                     border: grid[rowIndex][colIndex] > 0 ? "none" : "1px solid white",
                     aspectRatio: 1 / 1,
+                    cursor: "default",
                   }}
                 >
                   {grid[rowIndex][colIndex]}

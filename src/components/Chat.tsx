@@ -1,13 +1,14 @@
 import { trpc } from "../utils/trpc";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-
+import { RiSendPlane2Fill, RiCloseFill } from "react-icons/ri";
 function AddMessageForm({ createdById, roomid }: { createdById: string; roomid: string }) {
   const addPost = trpc.chat.add.useMutation();
   const { data: session } = useSession();
   const [message, setMessage] = useState("");
   const [enterToPostMessage, setEnterToPostMessage] = useState(true);
+
   async function postMessage() {
     const input = {
       text: message,
@@ -21,58 +22,49 @@ function AddMessageForm({ createdById, roomid }: { createdById: string; roomid: 
     } catch {}
   }
 
-  const userName = session?.user?.name;
-  if (!userName) {
-    return (
-      <div>
-        <p>You have to sign in to write.</p>
-        <button onClick={() => signIn("google")} data-testid="signin">
-          Sign In
-        </button>
-      </div>
-    );
-  }
   return (
-    <>
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          await postMessage();
-        }}
-      >
-        <fieldset disabled={addPost.isLoading}>
-          <div>
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              rows={message.split(/\r|\n/).length}
-              id="text"
-              name="text"
-              onKeyDown={async (e) => {
-                if (e.key === "Shift") {
-                  setEnterToPostMessage(false);
-                }
-                if (e.key === "Enter" && enterToPostMessage) {
-                  postMessage();
-                }
-              }}
-              onKeyUp={(e) => {
-                if (e.key === "Shift") {
-                  setEnterToPostMessage(true);
-                }
-              }}
-              onBlur={() => {
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault();
+        await postMessage();
+      }}
+      className="p-4"
+    >
+      <fieldset disabled={addPost.isLoading}>
+        <div className="flex justify-between gap-x-4">
+          <textarea
+            className="textarea w-full"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            rows={message.split(/\r|\n/).length}
+            id="text"
+            name="text"
+            onKeyDown={async (e) => {
+              if (e.key === "Shift") {
+                setEnterToPostMessage(false);
+              }
+              if (e.key === "Enter" && enterToPostMessage) {
+                postMessage();
+              }
+            }}
+            onKeyUp={(e) => {
+              if (e.key === "Shift") {
                 setEnterToPostMessage(true);
-              }}
-            />
-            <div>
-              <button type="submit">Submit</button>
-            </div>
+              }
+            }}
+            onBlur={() => {
+              setEnterToPostMessage(true);
+            }}
+          />
+          <div>
+            <button type="submit" className="btn">
+              <RiSendPlane2Fill className="w-8 h-8" />
+            </button>
           </div>
-        </fieldset>
-        {addPost.error && <p style={{ color: "red" }}>{addPost.error.message}</p>}
-      </form>
-    </>
+        </div>
+      </fieldset>
+      {addPost.error && <p style={{ color: "red" }}>{addPost.error.message}</p>}
+    </form>
   );
 }
 
@@ -149,39 +141,53 @@ export default function Chat({ createdById }: { createdById: string }) {
   });
 
   return (
-    <>
-      <div>
-        <div>
-          <div>
-            <div>
-              <div>
-                {messages?.map((item) => {
-                  return (
-                    <div key={item.id}>
-                      <p>{item.name}</p>
-                      <p
-                        style={{
-                          backgroundColor: item.fromId === session?.user?.id ? "gray" : "#FF3A20",
-                          overflowWrap: "break-word",
-                          alignSelf: item.fromId === session?.user?.id ? "end" : "start",
-                          borderRadius: "10px",
-                          padding: 1,
-                        }}
-                      >
-                        {item.text}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-              <div style={{ marginTop: 5 }}>
-                <AddMessageForm createdById={createdById} roomid={roomid as string} />
-              </div>
+    <div className="bg-slate-900 w-auto flex flex-col">
+      <label
+        htmlFor="my-drawer-4"
+        className="drawer-button btn m-4 top-0 z-30 bg-rose-600 w-16 left-0"
+      >
+        <RiCloseFill className="w-8 h-8 " />
+      </label>
+      <div className="flex-1">
+        {messages?.map((message) => {
+          return (
+            <div key={message.id}>
+              {session?.user?.id !== message.fromId && (
+                <div className="chat chat-start">
+                  <div className="chat-header">
+                    {message.name}
+                    <time className="text-xs opacity-50">
+                      {message.createdAt.toLocaleDateString(navigator.language, {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </time>
+                  </div>
+                  <div className="chat-bubble">{message.text}</div>
+                </div>
+              )}
+              {session?.user?.id === message.fromId && (
+                <div className="chat chat-end">
+                  <div className="chat-header">
+                    {message.name}
+                    <time className="text-xs opacity-50">
+                      {message.createdAt.toLocaleDateString(navigator.language, {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </time>
+                  </div>
+                  <div className="chat-bubble bg-purple-400 text-black">{message.text}</div>
+                </div>
+              )}
             </div>
-          </div>
-        </div>
+          );
+        })}
       </div>
-    </>
+      <div>
+        <AddMessageForm createdById={createdById} roomid={roomid as string} />
+      </div>
+    </div>
   );
 }
 
