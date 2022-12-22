@@ -1,6 +1,24 @@
 import { router, publicProcedure } from "../trpc";
 import { z } from "zod";
 import { prisma } from "../prisma";
+import { EventEmitter } from "events";
+import type { Rooms } from "@prisma/client";
+import { observable } from "@trpc/server/observable";
+
+interface MyEvents {
+  roomInfoChange: (data: Rooms) => void;
+}
+declare interface MyEventEmitter {
+  on<TEv extends keyof MyEvents>(event: TEv, listener: MyEvents[TEv]): this;
+  off<TEv extends keyof MyEvents>(event: TEv, listener: MyEvents[TEv]): this;
+  once<TEv extends keyof MyEvents>(event: TEv, listener: MyEvents[TEv]): this;
+  emit<TEv extends keyof MyEvents>(event: TEv, ...args: Parameters<MyEvents[TEv]>): boolean;
+}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+class MyEventEmitter extends EventEmitter {}
+
+// In a real app, you'd probably use Redis or something
+const ee = new MyEventEmitter();
 
 export const roomsRouter = router({
   createRoom: publicProcedure
@@ -52,7 +70,6 @@ export const roomsRouter = router({
         },
       });
     }),
-
   joinRoom: publicProcedure
     .input(
       z.object({
@@ -113,28 +130,71 @@ export const roomsRouter = router({
         });
       }
     }),
-  getRooms: publicProcedure.query(async ({ ctx }) => {
-    const roomsList = await prisma.rooms.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-      select: {
-        id: true,
-        roomname: true,
-        createdById: true,
-        createdByName: true,
-        isPrivate: true,
-        opponentId: true,
-        opponentName: true,
-        opponentReady: true,
-        gameStarted: true,
-        turn: true,
-        createdAt: true,
-        createdByImage: true,
-      },
-    });
-    return roomsList;
-  }),
+  getRooms: publicProcedure
+    .input(
+      z.object({
+        createdById: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const roomsList = await prisma.rooms.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+        where: {
+          NOT: {
+            createdById: {
+              equals: input.createdById,
+            },
+          },
+        },
+        select: {
+          id: true,
+          roomname: true,
+          createdById: true,
+          createdByName: true,
+          isPrivate: true,
+          opponentId: true,
+          opponentName: true,
+          opponentReady: true,
+          gameStarted: true,
+          turn: true,
+          createdAt: true,
+          createdByImage: true,
+        },
+      });
+      return roomsList;
+    }),
+  getYourRoom: publicProcedure
+    .input(
+      z.object({
+        createdById: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const yourRoom = await prisma.rooms.findFirst({
+        where: {
+          createdById: {
+            equals: input.createdById,
+          },
+        },
+        select: {
+          id: true,
+          roomname: true,
+          createdById: true,
+          createdByName: true,
+          isPrivate: true,
+          opponentId: true,
+          opponentName: true,
+          opponentReady: true,
+          gameStarted: true,
+          turn: true,
+          createdAt: true,
+          createdByImage: true,
+        },
+      });
+      return yourRoom;
+    }),
   getRoomInfo: publicProcedure
     .input(
       z.object({
@@ -166,6 +226,7 @@ export const roomsRouter = router({
           gameStarted: input.gameStarted,
         },
       });
+      ee.emit("roomInfoChange", room);
 
       return room;
     }),
@@ -185,6 +246,7 @@ export const roomsRouter = router({
           opponentReady: input.opponentReady,
         },
       });
+      ee.emit("roomInfoChange", room);
 
       return room;
     }),
@@ -210,6 +272,7 @@ export const roomsRouter = router({
           roomId: input.roomId,
         },
       });
+      ee.emit("roomInfoChange", room);
 
       return room;
     }),
@@ -230,6 +293,17 @@ export const roomsRouter = router({
           turn: input.turn,
         },
       });
+      ee.emit("roomInfoChange", room);
       return room;
     }),
+
+  onRoomInfoChange: publicProcedure.subscription(() => {
+    return observable<Rooms>((emit) => {
+      const onAdd = (data: Rooms) => emit.next(data);
+      ee.on("roomInfoChange", onAdd);
+      return () => {
+        ee.off("roomInfoChange", onAdd);
+      };
+    });
+  }),
 });
