@@ -14,7 +14,7 @@ const Navbar = ({ session }: { session: Session }) => {
       </div>
       <div className="navbar-end">
         <div className="dropdown dropdown-end">
-          <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+          <label tabIndex={0} className="btn btn-ghost btn-circle avatar m-4">
             <div className="rounded-full">
               <Image src={session.user?.image || ""} alt="Profile image" width={50} height={50} />
             </div>

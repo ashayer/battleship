@@ -43,7 +43,6 @@ export const roomsRouter = router({
       });
       const allRooms = await prisma.rooms.findMany();
 
-      console.log(allRooms.length);
       if (hasRoom) {
         throw new Error("You already created a room");
       } else if (allRooms.length > 50) {

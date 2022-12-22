@@ -124,7 +124,7 @@ export default function RoomsList({ user }: { user: User }) {
           </div>
         )}
       </section>
-      <main className="m-auto mt-6 grid sm:w-11/12 2xl:grid-cols-4 px-4">
+      <main className="m-auto mt-6 grid sm:w-11/12 2xl:grid-cols-4 px-4 gap-4">
         {listOfRooms.data?.map((room) => (
           <div
             key={room.id}

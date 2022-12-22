@@ -115,9 +115,7 @@ const YourGameGrid = ({
                     aspectRatio: 1 / 1,
                     cursor: "default",
                   }}
-                >
-                  {grid[rowIndex][colIndex]}
-                </div>
+                ></div>
               </>
             );
           }),

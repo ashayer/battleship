@@ -103,9 +103,7 @@ const OpponentGameGrid = ({
                     cursor: isYourTurn ? "pointer" : "",
                     aspectRatio: 1 / 1,
                   }}
-                >
-                  {grid[rowIndex][colIndex]}
-                </div>
+                ></div>
               </>
             );
           }),
