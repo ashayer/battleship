@@ -1,13 +1,16 @@
 import Image from "next/image";
 import { signOut } from "next-auth/react";
 import type { Session } from "next-auth/core/types";
+import Link from "next/link";
 
 const Navbar = ({ session }: { session: Session }) => {
   return (
     <nav className="navbar w-screen">
       <div className="navbar-start"></div>
       <div className="navbar-center">
-        <p className="font-bold text-4xl">Battleship</p>
+        <p className="font-bold text-4xl">
+          <Link href={"/"}>Battleship</Link>
+        </p>
       </div>
       <div className="navbar-end">
         <div className="dropdown dropdown-end">

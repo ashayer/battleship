@@ -19,7 +19,6 @@ const OpponentGameGrid = ({
   movesList,
   createMove,
   changeTheTurn,
-  
 }: {
   isYourTurn: boolean;
   movesList: GameMoves[] | undefined;
@@ -61,26 +60,35 @@ const OpponentGameGrid = ({
   }, [grid, movesList, session?.user?.id]);
 
   return (
-    <div>
+    <div className="text-center mx-auto">
       <div
+        className="grid text-center"
         style={{
-          display: "grid",
-          marginRight: 50,
-          gridTemplateColumns: "repeat(11,50px)",
-          gridTemplateRows: "repeat(11,50px)",
-          textAlign: "center",
+          gridTemplateColumns: "repeat(11, minmax(10px, 50px))",
         }}
       >
         <div></div>
         {["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"].map((letter) => {
-          return <div key={letter}>{letter}</div>;
+          return (
+            <div key={letter} className="p-4">
+              {letter}
+            </div>
+          );
         })}
         {grid.map((rows, rowIndex) =>
           rows.map((col, colIndex) => {
             return (
               <>
-                {colIndex === 0 && <div>{rowIndex + 1}</div>}
-
+                {colIndex === 0 && (
+                  <div
+                    style={{
+                      aspectRatio: 1 / 1,
+                    }}
+                    className="flex items-center justify-center"
+                  >
+                    {rowIndex + 1}
+                  </div>
+                )}
                 <div
                   role="button"
                   key={`${rowIndex}-${colIndex}`}
@@ -93,6 +101,7 @@ const OpponentGameGrid = ({
                     backgroundColor: getColor(grid[rowIndex][colIndex]),
                     border: grid[rowIndex][colIndex] > 0 ? "none" : "1px solid white",
                     cursor: isYourTurn ? "pointer" : "",
+                    aspectRatio: 1 / 1,
                   }}
                 >
                   {grid[rowIndex][colIndex]}
@@ -102,7 +111,6 @@ const OpponentGameGrid = ({
           }),
         )}
       </div>
-      <h1>Enemy Grid</h1>
     </div>
   );
 };
