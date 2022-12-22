@@ -1,4 +1,4 @@
-import type { Post } from "@prisma/client";
+import type { Message } from "@prisma/client";
 import { observable } from "@trpc/server/observable";
 import { EventEmitter } from "events";
 import { prisma } from "../prisma";
@@ -6,7 +6,7 @@ import { z } from "zod";
 import { authedProcedure, publicProcedure, router } from "../trpc";
 
 interface MyEvents {
-  add: (data: Post) => void;
+  add: (data: Message) => void;
   isTypingUpdate: () => void;
 }
 declare interface MyEventEmitter {
@@ -46,21 +46,23 @@ export const chatRouter = router({
       z.object({
         id: z.string().uuid().optional(),
         text: z.string().min(1),
+        fromId: z.string(),
+        toId: z.string(),
+        roomID: z.string(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
       const { name } = ctx.user;
-      const post = await prisma.post.create({
+      const message = await prisma.message.create({
         data: {
           ...input,
           name,
-          source: "GITHUB",
         },
       });
-      ee.emit("add", post);
+      ee.emit("add", message);
       delete currentlyTyping[name];
       ee.emit("isTypingUpdate");
-      return post;
+      return message;
     }),
 
   isTyping: authedProcedure.input(z.object({ typing: z.boolean() })).mutation(({ input, ctx }) => {
@@ -80,13 +82,14 @@ export const chatRouter = router({
       z.object({
         cursor: z.date().nullish(),
         take: z.number().min(1).max(50).nullish(),
+        roomId: z.string(),
       }),
     )
     .query(async ({ input }) => {
       const take = input.take ?? 10;
       const cursor = input.cursor;
 
-      const page = await prisma.post.findMany({
+      const page = await prisma.message.findMany({
         orderBy: {
           createdAt: "desc",
         },
@@ -108,8 +111,8 @@ export const chatRouter = router({
     }),
 
   onAdd: publicProcedure.subscription(() => {
-    return observable<Post>((emit) => {
-      const onAdd = (data: Post) => emit.next(data);
+    return observable<Message>((emit) => {
+      const onAdd = (data: Message) => emit.next(data);
       ee.on("add", onAdd);
       return () => {
         ee.off("add", onAdd);

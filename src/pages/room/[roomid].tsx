@@ -7,6 +7,7 @@ import Head from "next/head";
 import type { GameMoves, Rooms } from "@prisma/client";
 import YourGameGrid from "components/YourGameGrid";
 import OpponentGameGrid from "components/OpponentGameGrid";
+import Chat from "components/Chat";
 
 const RoomPage: NextPage = () => {
   const router = useRouter();
@@ -175,61 +176,80 @@ const RoomPage: NextPage = () => {
   }
 
   return (
-    <div>
+    <>
       <Head>
         <title>{roomInfoState?.createdByName}&apos;s room</title>
       </Head>
       {roomInfo.data && roomInfoState && (
-        <>
-          <div>
-            <p>Opponent</p>
-            <p>{whichOpponent()}</p>
-            {roomInfoState.winner !== null && (
-              <p>{roomInfoState.winner === session?.user?.id ? "You win" : "You lose"}</p>
+        <div className="drawer drawer-end">
+          <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
+          <div className="drawer-content">
+            <label htmlFor="my-drawer-4" className="drawer-button btn btn-primary">
+              Open drawer
+            </label>
+            <div>
+              <p>Opponent</p>
+              <p>{whichOpponent()}</p>
+              {roomInfoState.winner !== null && (
+                <p>{roomInfoState.winner === session?.user?.id ? "You win" : "You lose"}</p>
+              )}
+            </div>
+            {!roomInfoState.gameStarted &&
+              roomInfoState.createdById === session?.user?.id &&
+              roomInfoState.opponentId !== null &&
+              roomInfoState.opponentReady && (
+                <button onClick={() => startTheGame(true)}>Start Game</button>
+              )}
+            {roomInfoState.gameStarted &&
+              roomInfoState.createdById === session?.user?.id &&
+              roomInfoState.opponentReady && (
+                <button onClick={() => startTheGame(false)}>End Game</button>
+              )}
+            {roomInfoState.createdById !== session?.user?.id && !roomInfoState.opponentReady && (
+              <button onClick={() => readyUpPlayer()}>Ready Up</button>
             )}
+            {roomInfoState.turn === session?.user?.id && roomInfoState?.gameStarted && (
+              <div>It is your turn</div>
+            )}
+            {roomInfoState.turn !== session?.user?.id && roomInfoState?.gameStarted && (
+              <>Opponent turn</>
+            )}
+            <div
+              style={{
+                display: "flex",
+                border: "3px solid red",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <YourGameGrid movesList={movesList} roomInfoState={roomInfoState} />
+              {roomInfoState.gameStarted && (
+                <OpponentGameGrid
+                  isYourTurn={roomInfoState.turn === session?.user?.id}
+                  movesList={movesList}
+                  createMove={createMove}
+                  changeTheTurn={changeTheTurn}
+                />
+              )}
+            </div>
           </div>
-          {!roomInfoState.gameStarted &&
-            roomInfoState.createdById === session?.user?.id &&
-            roomInfoState.opponentId !== null &&
-            roomInfoState.opponentReady && (
-              <button onClick={() => startTheGame(true)}>Start Game</button>
-            )}
-          {roomInfoState.gameStarted &&
-            roomInfoState.createdById === session?.user?.id &&
-            roomInfoState.opponentReady && (
-              <button onClick={() => startTheGame(false)}>End Game</button>
-            )}
-          {roomInfoState.createdById !== session?.user?.id && !roomInfoState.opponentReady && (
-            <button onClick={() => readyUpPlayer()}>Ready Up</button>
-          )}
-          {roomInfoState.turn === session?.user?.id && roomInfoState?.gameStarted && (
-            <div>It is your turn</div>
-          )}
-          {roomInfoState.turn !== session?.user?.id && roomInfoState?.gameStarted && (
-            <>Opponent turn</>
-          )}
-          <div
-            style={{
-              display: "flex",
-              border: "3px solid red",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <YourGameGrid movesList={movesList} roomInfoState={roomInfoState} />
-            {roomInfoState.gameStarted && (
-              <OpponentGameGrid
-                isYourTurn={roomInfoState.turn === session?.user?.id}
-                movesList={movesList}
-                createMove={createMove}
-                changeTheTurn={changeTheTurn}
-              />
-            )}
+          <div className="drawer-side">
+            <label htmlFor="my-drawer-4" className="drawer-overlay"></label>
+            <Chat createdById={roomInfo.data.createdById || ""} />
           </div>
-        </>
+        </div>
       )}
-    </div>
+    </>
   );
 };
+
+{
+  /* {roomInfo.data && roomInfoState && (
+        <>
+
+        </>
+      )}
+    </div> */
+}
 
 export default RoomPage;
