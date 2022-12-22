@@ -94,16 +94,6 @@ export default function RoomsList() {
     onSuccess: () => listOfRooms.refetch(),
   });
 
-  if (status === "loading") return <span>Loading...</span>;
-
-  if (status === "unauthenticated")
-    return (
-      <div>
-        <p>You have to sign in to use.</p>
-        <button onClick={() => signIn("", { callbackUrl: "/" })}>Sign In</button>
-      </div>
-    );
-
   if (listOfRooms.isLoading) return <span>Loading..</span>;
 
   return (
@@ -178,10 +168,10 @@ export default function RoomsList() {
               </p>
             </section>
             {room.opponentId === session?.user?.id && (
-                <Link href={`/room/${room.id}`} title="View room">
-                  View Room
-                </Link>
-              )}
+              <Link href={`/room/${room.id}`} title="View room">
+                View Room
+              </Link>
+            )}
             {room.createdById === session?.user?.id && (
               <Link href={`/room/${room.id}`} title="View room">
                 View Room
