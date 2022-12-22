@@ -1,15 +1,16 @@
-import { useSession } from "next-auth/react";
+import { SessionProviderProps, useSession } from "next-auth/react";
 import Head from "next/head";
 import RoomsList from "components/RoomsList";
 import Unauthenticated from "components/Unauthenticated";
 import Navbar from "components/Navbar";
+import type { User } from "next-auth/core/types";
 
 export default function IndexPage() {
   const { data: session, status } = useSession();
-
   if (status === "loading") return <>Loading...</>;
 
-  if (status === "unauthenticated" || session === null) return <Unauthenticated />;
+  if (status === "unauthenticated" || session === null || session.user === null)
+    return <Unauthenticated />;
 
   return (
     <>
@@ -17,9 +18,9 @@ export default function IndexPage() {
         <title>Battleship</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {session.user && <Navbar userImage={session.user.image || ""} />}
+      {session.user && <Navbar session={session} />}
       <main>
-        <RoomsList />
+        <RoomsList user={session.user as User} />
       </main>
     </>
   );

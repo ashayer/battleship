@@ -1,7 +1,8 @@
 import Image from "next/image";
 import { signOut } from "next-auth/react";
+import type { Session } from "next-auth/core/types";
 
-const Navbar = ({ userImage }: { userImage: string }) => {
+const Navbar = ({ session }: { session: Session }) => {
   return (
     <nav className="navbar w-screen">
       <div className="navbar-start"></div>
@@ -12,13 +13,10 @@ const Navbar = ({ userImage }: { userImage: string }) => {
         <div className="dropdown dropdown-end">
           <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
             <div className="rounded-full">
-              <Image src={userImage} alt="Profile image" width={50} height={50} />
+              <Image src={session.user?.image || ""} alt="Profile image" width={50} height={50} />
             </div>
           </label>
-          <ul
-            tabIndex={0}
-            className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
-          >
+          <ul className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
             <li>
               <a onClick={() => signOut()}>Logout</a>
             </li>

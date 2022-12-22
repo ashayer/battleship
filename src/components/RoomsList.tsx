@@ -1,12 +1,10 @@
 import { trpc } from "../utils/trpc";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import type { User } from "next-auth/core/types";
 
-const CreateRoomForm = ({ createRoom }: { createRoom: any }) => {
-  const { data: session } = useSession();
-
+const CreateRoomForm = ({ createRoom, user }: { createRoom: any; user: User }) => {
   const [roomPasscode, setRoomPasscode] = useState("");
   const [roomName, setRoomName] = useState("");
   const [isPrivate, setIsPrivate] = useState(true);
@@ -15,11 +13,11 @@ const CreateRoomForm = ({ createRoom }: { createRoom: any }) => {
     const input = {
       roompasscode: roomPasscode,
       roomname: roomName,
-      createdById: session?.user?.id as string,
-      createdByName: session?.user?.name as string,
+      createdById: user.id,
+      createdByName: user.name,
       isPrivate,
-      createdByImage: session?.user?.image as string,
-      turn: session?.user?.id as string,
+      createdByImage: user.image,
+      turn: user.id,
     };
 
     try {
@@ -28,16 +26,7 @@ const CreateRoomForm = ({ createRoom }: { createRoom: any }) => {
       setRoomName("");
     } catch (err) {}
   }
-  const userName = session?.user?.name;
 
-  if (!userName) {
-    return (
-      <div>
-        <p>You have to sign in to create a game.</p>
-        <button onClick={() => signIn("", { callbackUrl: "/" })}>Sign In</button>
-      </div>
-    );
-  }
   return (
     <form
       onSubmit={async (e) => {
@@ -77,10 +66,9 @@ const CreateRoomForm = ({ createRoom }: { createRoom: any }) => {
   );
 };
 
-export default function RoomsList() {
-  const { data: session, status } = useSession();
-  const listOfRooms = trpc.rooms.getRooms.useQuery({ createdById: session?.user?.id as string });
-  const yourRoom = trpc.rooms.getYourRoom.useQuery({ createdById: session?.user?.id as string });
+export default function RoomsList({ user }: { user: User }) {
+  const listOfRooms = trpc.rooms.getRooms.useQuery({ createdById: user.id as string });
+  const yourRoom = trpc.rooms.getYourRoom.useQuery({ createdById: user.id });
 
   const createRoom = trpc.rooms.createRoom.useMutation({
     onSuccess: () => yourRoom.refetch(),
@@ -99,7 +87,7 @@ export default function RoomsList() {
   return (
     <div>
       <div className="text-center">
-        <CreateRoomForm createRoom={createRoom} />
+        <CreateRoomForm createRoom={createRoom} user={user} />
         <button
           onClick={() => listOfRooms.refetch()}
           className={`btn my-4 btn-accent ${listOfRooms.isRefetching && "loading"}`}
@@ -110,7 +98,7 @@ export default function RoomsList() {
       <section className="m-auto sm:w-1/2">
         {yourRoom.data && (
           <div className="flex bg-zinc-800 place-items-center justify-between p-4 rounded-2xl">
-            <section className="text-2xl">
+            <section className="md:text-2xl">
               <span>
                 <p>
                   <span className="font-bold">Room Name: </span>
@@ -122,8 +110,8 @@ export default function RoomsList() {
                 <span>{yourRoom.data.createdByName}</span>
               </p>
             </section>
-            {yourRoom.data.opponentId === session?.user?.id ||
-              (yourRoom.data.createdById === session?.user?.id && (
+            {yourRoom.data.opponentId === user.id ||
+              (yourRoom.data.createdById === user.id && (
                 <Link href={`/room/${yourRoom.data.id}`} title="View room">
                   View Room
                 </Link>
@@ -155,7 +143,7 @@ export default function RoomsList() {
             key={room.id}
             className="border border-slate-500 flex bg-zinc-800 place-items-center justify-between p-4 rounded-2xl"
           >
-            <section className="text-xl overflow-x-hidden w-96">
+            <section className="md:text-xl overflow-x-hidden">
               <span>
                 <p>
                   <span className="font-bold">Room Name: </span>
@@ -167,31 +155,31 @@ export default function RoomsList() {
                 <span>{room.createdByName}</span>
               </p>
             </section>
-            {room.opponentId === session?.user?.id && (
+            {room.opponentId === user.id && (
               <Link href={`/room/${room.id}`} title="View room">
                 View Room
               </Link>
             )}
-            {room.createdById === session?.user?.id && (
+            {room.createdById === user.id && (
               <Link href={`/room/${room.id}`} title="View room">
                 View Room
               </Link>
             )}
-            {room.opponentId === session?.user?.id && (
+            {room.opponentId === user.id && (
               <button
                 onClick={() =>
                   joinRoom.mutate({
                     roomId: room.id,
                     isJoining: false,
-                    opponentId: session?.user?.id as string,
-                    opponentName: session?.user?.name as string,
+                    opponentId: user.id as string,
+                    opponentName: user.name as string,
                   })
                 }
               >
                 Leave
               </button>
             )}
-            {room.createdById === session?.user?.id && (
+            {room.createdById === user.id && (
               <section>
                 <button
                   onClick={() => deleteRoom.mutateAsync({ id: room.id as string })}
@@ -201,14 +189,14 @@ export default function RoomsList() {
                 </button>
               </section>
             )}
-            {room.createdById !== session?.user?.id && room.opponentId === null && (
+            {room.createdById !== user.id && room.opponentId === null && (
               <button
                 onClick={() =>
                   joinRoom.mutate({
                     roomId: room.id,
                     isJoining: true,
-                    opponentId: session?.user?.id as string,
-                    opponentName: session?.user?.name as string,
+                    opponentId: user.id as string,
+                    opponentName: user.name as string,
                   })
                 }
                 disabled={room.opponentId !== null}
