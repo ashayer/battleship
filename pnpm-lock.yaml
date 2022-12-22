@@ -26,6 +26,7 @@ specifiers:
   eslint-plugin-prettier: ^4.0.0
   eslint-plugin-react: ^7.25.1
   eslint-plugin-react-hooks: ^4.2.0
+  immer: ^9.0.16
   next: ^13.0.0
   next-auth: ^4.14.0
   node-fetch: ^2.6.1
@@ -54,6 +55,7 @@ dependencies:
   '@trpc/server': 10.6.0
   clsx: 1.2.1
   daisyui: 2.45.0_r4gnkvssmvyxmi2wmat5xbx36a
+  immer: 9.0.16
   next: 13.0.7_biqbaboplfbrettd7655fr4n2y
   next-auth: 4.18.6_gvvct4imq5upoiloat43sswrza
   node-fetch: 2.6.7
@@ -2146,6 +2148,10 @@ packages:
     resolution: {integrity: sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==}
     engines: {node: '>= 4'}
     dev: true
+
+  /immer/9.0.16:
+    resolution: {integrity: sha512-qenGE7CstVm1NrHQbMh8YaSzTZTFNP3zPqr3YU0S0UY441j4bJTg4A2Hh5KAhwgaiU6ZZ1Ar6y/2f4TblnMReQ==}
+    dev: false
 
   /import-fresh/3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
