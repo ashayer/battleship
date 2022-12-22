@@ -43,14 +43,14 @@ export default function IndexPage() {
                 className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
               >
                 <li>
-                  <a>Logout</a>
+                  <a onClick={() => signOut()}>Logout</a>
                 </li>
               </ul>
             </div>
           </div>
         </div>
       </nav>
-      <main className="">
+      <main>
         <RoomsList />
       </main>
     </>

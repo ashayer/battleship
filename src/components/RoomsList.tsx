@@ -79,14 +79,15 @@ const CreateRoomForm = ({ createRoom }: { createRoom: any }) => {
 
 export default function RoomsList() {
   const { data: session, status } = useSession();
-  const listOfRooms = trpc.rooms.getRooms.useQuery();
+  const listOfRooms = trpc.rooms.getRooms.useQuery({ createdById: session?.user?.id as string });
+  const yourRoom = trpc.rooms.getYourRoom.useQuery({ createdById: session?.user?.id as string });
 
   const createRoom = trpc.rooms.createRoom.useMutation({
-    onSuccess: () => listOfRooms.refetch(),
+    onSuccess: () => yourRoom.refetch(),
   });
 
   const deleteRoom = trpc.rooms.deleteRoom.useMutation({
-    onSuccess: () => listOfRooms.refetch(),
+    onSuccess: () => yourRoom.refetch(),
   });
 
   const joinRoom = trpc.rooms.joinRoom.useMutation({
@@ -116,32 +117,76 @@ export default function RoomsList() {
           {!listOfRooms.isFetching && "Refresh rooms list"}
         </button>
       </div>
-      <main className="m-auto mt-6 grid sm:w-8/12 2xl:grid-cols-2">
-        {listOfRooms.data?.map((room) => (
-          <div key={room.id} className="border">
-            <section>
+      <section className="m-auto sm:w-1/2">
+        {yourRoom.data && (
+          <div className="flex bg-zinc-800 place-items-center justify-between p-4 rounded-2xl">
+            <section className="text-2xl">
               <span>
                 <p>
-                  <span>Room Name: </span>
+                  <span className="font-bold">Room Name: </span>
+                  <span>{yourRoom.data.roomname}</span>
+                </p>
+              </span>
+              <p>
+                <span className="font-bold">Host: </span>
+                <span>{yourRoom.data.createdByName}</span>
+              </p>
+            </section>
+            {yourRoom.data.opponentId === session?.user?.id ||
+              (yourRoom.data.createdById === session?.user?.id && (
+                <Link href={`/room/${yourRoom.data.id}`} title="View room">
+                  View Room
+                </Link>
+              ))}
+            <section>
+              <button
+                onClick={() => deleteRoom.mutateAsync({ id: yourRoom.data?.id as string })}
+                title="Delete your room"
+              >
+                Delete Room
+              </button>
+            </section>
+
+            <div>
+              <Image
+                src={yourRoom.data.createdByImage as string}
+                alt="Profile image"
+                width={50}
+                height={50}
+                className="rounded-full"
+              />
+            </div>
+          </div>
+        )}
+      </section>
+      <main className="m-auto mt-6 grid sm:w-8/12 2xl:grid-cols-2">
+        {listOfRooms.data?.map((room) => (
+          <div
+            key={room.id}
+            className="border border-slate-500 flex bg-zinc-800 place-items-center justify-between p-4 rounded-2xl"
+          >
+            <section className="text-xl overflow-x-hidden w-96">
+              <span>
+                <p>
+                  <span className="font-bold">Room Name: </span>
                   <span>{room.roomname}</span>
                 </p>
               </span>
               <p>
-                <span>Host: </span>
+                <span className="font-bold">Host: </span>
                 <span>{room.createdByName}</span>
               </p>
             </section>
             {room.opponentId === session?.user?.id && (
-              <Link href={`/room/${room.id}`} title="View room">
-                View Room
-              </Link>
-            )}
+                <Link href={`/room/${room.id}`} title="View room">
+                  View Room
+                </Link>
+              )}
             {room.createdById === session?.user?.id && (
               <Link href={`/room/${room.id}`} title="View room">
                 View Room
               </Link>
             )}
-
             {room.opponentId === session?.user?.id && (
               <button
                 onClick={() =>
@@ -181,13 +226,15 @@ export default function RoomsList() {
                 JOIN
               </button>
             )}
-            <Image
-              src={room.createdByImage as string}
-              alt="Profile image"
-              width={50}
-              height={50}
-              className="rounded-full"
-            />
+            <div>
+              <Image
+                src={room.createdByImage as string}
+                alt="Profile image"
+                width={50}
+                height={50}
+                className="rounded-full"
+              />
+            </div>
           </div>
         ))}
       </main>
