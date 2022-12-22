@@ -97,10 +97,13 @@ export default function RoomsList({ user }: { user: User }) {
           {!listOfRooms.isFetching && "Refresh rooms list"}
         </button>
       </div>
-      <section className="m-auto sm:w-1/2 px-4">
+      <section className="m-auto sm:w-11/12 px-4">
         {yourRoom.data && (
           <div className="flex bg-zinc-800 place-items-center justify-between p-4 rounded-2xl">
-            <section className="md:text-2xl">
+            <Link
+              href={`/room/${yourRoom.data.id}`}
+              className="md:text-xl w-full whitespace-nowrap overflow-hidden "
+            >
               <span>
                 <p>
                   <span className="font-bold">Room Name: </span>
@@ -111,35 +114,17 @@ export default function RoomsList({ user }: { user: User }) {
                 <span className="font-bold">Host: </span>
                 <span>{yourRoom.data.createdByName}</span>
               </p>
-            </section>
-            {yourRoom.data.opponentId === user.id ||
-              (yourRoom.data.createdById === user.id && (
-                <Link href={`/room/${yourRoom.data.id}`} title="View room">
-                  View Room
-                </Link>
-              ))}
-            <section>
-              <button
-                onClick={() => deleteRoom.mutateAsync({ id: yourRoom.data?.id as string })}
-                title="Delete your room"
-              >
-                Delete Room
-              </button>
-            </section>
-
-            <div>
-              <Image
-                src={yourRoom.data.createdByImage as string}
-                alt="Profile image"
-                width={50}
-                height={50}
-                className="rounded-full"
-              />
-            </div>
+            </Link>
+            <button
+              onClick={() => deleteRoom.mutateAsync({ id: yourRoom.data?.id as string })}
+              title="Delete your room"
+            >
+              Delete Your Room
+            </button>
           </div>
         )}
       </section>
-      <main className="m-auto mt-6 grid sm:w-8/12 2xl:grid-cols-2 px-4">
+      <main className="m-auto mt-6 grid sm:w-11/12 2xl:grid-cols-4 px-4">
         {listOfRooms.data?.map((room) => (
           <div
             key={room.id}
@@ -149,34 +134,27 @@ export default function RoomsList({ user }: { user: User }) {
                 : "border-slate-500"
             } flex-col bg-zinc-800 place-items-center overflow-hidden justify-between p-4 rounded-2xl`}
           >
-            <Link
-              href={
-                room.opponentId === user.id || room.createdById === user.id
-                  ? `/room/${room.id}`
-                  : ""
-              }
-              className="md:text-xl w-full whitespace-nowrap overflow-hidden "
-            >
-              <span>
-                <p>
-                  <span className="font-bold">Room Name: </span>
-                  <span>{room.roomname}</span>
-                </p>
-              </span>
-              <p>
-                <span className="font-bold">Host: </span>
-                <span>{room.createdByName}</span>
-              </p>
-              {/* <div>
-                <Image
-                  src={room.createdByImage as string}
-                  alt="Profile image"
-                  width={50}
-                  height={50}
-                  className="rounded-full"
-                />
-              </div> */}
-            </Link>
+            <div className="overflow-hidden whitespace-nowrap">
+              <Link
+                href={
+                  room.opponentId === user.id || room.createdById === user.id
+                    ? `/room/${room.id}`
+                    : ""
+                }
+                className="md:text-xl w-11/12"
+              >
+                <span>
+                  <p>
+                    <span className="font-bold">Room Name: </span>
+                    <span>{room.roomname}</span>
+                  </p>
+                  <p>
+                    <span className="font-bold">Host: </span>
+                    <span>{room.createdByName}</span>
+                  </p>
+                </span>
+              </Link>
+            </div>
             <div className="text-center my-2">
               {room.opponentId === user.id && (
                 <button
