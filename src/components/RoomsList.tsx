@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import type { User } from "next-auth/core/types";
+import { useRouter } from "next/router";
 
 const CreateRoomForm = ({ createRoom, user }: { createRoom: any; user: User }) => {
   const [roomPasscode, setRoomPasscode] = useState("");
@@ -67,6 +68,7 @@ const CreateRoomForm = ({ createRoom, user }: { createRoom: any; user: User }) =
 };
 
 export default function RoomsList({ user }: { user: User }) {
+  const router = useRouter();
   const listOfRooms = trpc.rooms.getRooms.useQuery({ createdById: user.id as string });
   const yourRoom = trpc.rooms.getYourRoom.useQuery({ createdById: user.id });
 
@@ -95,7 +97,7 @@ export default function RoomsList({ user }: { user: User }) {
           {!listOfRooms.isFetching && "Refresh rooms list"}
         </button>
       </div>
-      <section className="m-auto sm:w-1/2">
+      <section className="m-auto sm:w-1/2 px-4">
         {yourRoom.data && (
           <div className="flex bg-zinc-800 place-items-center justify-between p-4 rounded-2xl">
             <section className="md:text-2xl">
@@ -137,13 +139,24 @@ export default function RoomsList({ user }: { user: User }) {
           </div>
         )}
       </section>
-      <main className="m-auto mt-6 grid sm:w-8/12 2xl:grid-cols-2">
+      <main className="m-auto mt-6 grid sm:w-8/12 2xl:grid-cols-2 px-4">
         {listOfRooms.data?.map((room) => (
           <div
             key={room.id}
-            className="border border-slate-500 flex bg-zinc-800 place-items-center justify-between p-4 rounded-2xl"
+            className={`border-4 ${
+              room.opponentId === user.id || room.createdById === user.id
+                ? "border-green-600"
+                : "border-slate-500"
+            } flex-col bg-zinc-800 place-items-center overflow-hidden justify-between p-4 rounded-2xl`}
           >
-            <section className="md:text-xl overflow-x-hidden">
+            <Link
+              href={
+                room.opponentId === user.id || room.createdById === user.id
+                  ? `/room/${room.id}`
+                  : ""
+              }
+              className="md:text-xl w-full whitespace-nowrap overflow-hidden "
+            >
               <span>
                 <p>
                   <span className="font-bold">Room Name: </span>
@@ -154,64 +167,51 @@ export default function RoomsList({ user }: { user: User }) {
                 <span className="font-bold">Host: </span>
                 <span>{room.createdByName}</span>
               </p>
-            </section>
-            {room.opponentId === user.id && (
-              <Link href={`/room/${room.id}`} title="View room">
-                View Room
-              </Link>
-            )}
-            {room.createdById === user.id && (
-              <Link href={`/room/${room.id}`} title="View room">
-                View Room
-              </Link>
-            )}
-            {room.opponentId === user.id && (
-              <button
-                onClick={() =>
-                  joinRoom.mutate({
-                    roomId: room.id,
-                    isJoining: false,
-                    opponentId: user.id as string,
-                    opponentName: user.name as string,
-                  })
-                }
-              >
-                Leave
-              </button>
-            )}
-            {room.createdById === user.id && (
-              <section>
+              {/* <div>
+                <Image
+                  src={room.createdByImage as string}
+                  alt="Profile image"
+                  width={50}
+                  height={50}
+                  className="rounded-full"
+                />
+              </div> */}
+            </Link>
+            <div className="text-center my-2">
+              {room.opponentId === user.id && (
                 <button
-                  onClick={() => deleteRoom.mutateAsync({ id: room.id as string })}
-                  title="Delete your room"
+                  className="btn btn-secondary"
+                  onClick={() =>
+                    joinRoom.mutate({
+                      roomId: room.id,
+                      isJoining: false,
+                      opponentId: user.id as string,
+                      opponentName: user.name as string,
+                    })
+                  }
                 >
-                  Delete Room
+                  Leave
                 </button>
-              </section>
-            )}
-            {room.createdById !== user.id && room.opponentId === null && (
-              <button
-                onClick={() =>
-                  joinRoom.mutate({
-                    roomId: room.id,
-                    isJoining: true,
-                    opponentId: user.id as string,
-                    opponentName: user.name as string,
-                  })
-                }
-                disabled={room.opponentId !== null}
-              >
-                JOIN
-              </button>
-            )}
-            <div>
-              <Image
-                src={room.createdByImage as string}
-                alt="Profile image"
-                width={50}
-                height={50}
-                className="rounded-full"
-              />
+              )}
+              {room.createdById !== user.id && room.opponentId === null && (
+                <button
+                  className="btn btn-success"
+                  onClick={async () => {
+                    await joinRoom.mutate({
+                      roomId: room.id,
+                      isJoining: true,
+                      opponentId: user.id as string,
+                      opponentName: user.name as string,
+                    });
+                    if (joinRoom.isSuccess) {
+                      router.push(`/room/${room.id}`);
+                    }
+                  }}
+                  disabled={room.opponentId !== null}
+                >
+                  JOIN
+                </button>
+              )}
             </div>
           </div>
         ))}

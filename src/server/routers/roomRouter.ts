@@ -117,6 +117,7 @@ export const roomsRouter = router({
               opponentName: input.opponentName,
             },
           });
+
         }
       } else {
         const room = await prisma.rooms.update({
