@@ -19,6 +19,19 @@ const RoomPage: NextPage = () => {
   const [roomInfoState, setRoomInfoState] = useState<Rooms>();
   const utils = trpc.useContext();
   const [movesList, setMovesList] = useState<GameMoves[] | undefined>();
+  const [grid, setGrid] = useState([
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 2, 2, 2, 2],
+    [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 5, 5, 5, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 3, 3, 3, 3, 0, 0],
+  ]);
+
   const roomInfo = trpc.rooms.getRoomInfo.useQuery(
     { roomId: roomid as string },
     {
@@ -27,6 +40,18 @@ const RoomPage: NextPage = () => {
       },
     },
   );
+
+  if (roomInfo.isSuccess && roomInfo.data === null) {
+    router.push("/");
+  }
+
+  if (
+    roomInfo.isSuccess &&
+    roomInfo.data?.createdById !== session?.user?.id &&
+    roomInfo.data?.opponentId !== session?.user?.id
+  ) {
+    router.push("/");
+  }
 
   const getMovesQuery = trpc.game.getMoves.useQuery(
     { roomId: roomid as string },
@@ -52,6 +77,9 @@ const RoomPage: NextPage = () => {
   const startGame = trpc.rooms.startGame.useMutation();
   const changeTurn = trpc.rooms.changeTurn.useMutation();
   const readyUp = trpc.rooms.readyUp.useMutation();
+  const deleteRoom = trpc.rooms.deleteRoom.useMutation();
+  const kickOpponent = trpc.rooms.kickOpponent.useMutation();
+
   async function startTheGame(start: boolean) {
     const input = {
       roomId: roomid as string,
@@ -202,7 +230,12 @@ const RoomPage: NextPage = () => {
             </div>
 
             <div className="flex flex-col lg:flex-row gap-y-8 gap-x-8 justify-evenly items-center lg:w-11/12 mx-auto p-5">
-              <YourGameGrid movesList={movesList} roomInfoState={roomInfoState} />
+              <YourGameGrid
+                movesList={movesList}
+                roomInfoState={roomInfoState}
+                grid={grid}
+                setGrid={setGrid}
+              />
               {roomInfoState.gameStarted && (
                 <OpponentGameGrid
                   isYourTurn={roomInfoState.turn === session?.user?.id}
@@ -221,14 +254,34 @@ const RoomPage: NextPage = () => {
                     {roomInfoState.opponentId !== null &&
                       !roomInfoState.opponentReady &&
                       session?.user?.id === roomInfoState.createdById && (
-                        <div>Waiting for {roomInfoState.opponentName} to ready up...</div>
+                        <div className="flex flex-col gap-y-10">
+                          Waiting for {roomInfoState.opponentName} to ready up...
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => {
+                              kickOpponent.mutate({ roomId: roomid as string });
+                            }}
+                          >
+                            Kick opponent?
+                          </button>
+                        </div>
                       )}
                     {!roomInfoState.gameStarted &&
                       roomInfoState.opponentId !== null &&
                       roomInfoState.opponentReady && (
-                        <button className="btn btn-success" onClick={() => startTheGame(true)}>
-                          Start Game
-                        </button>
+                        <div className="flex flex-col gap-y-10">
+                          <button className="btn btn-success" onClick={() => startTheGame(true)}>
+                            Start Game
+                          </button>
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => {
+                              kickOpponent.mutate({ roomId: roomid as string });
+                            }}
+                          >
+                            Kick opponent?
+                          </button>
+                        </div>
                       )}
                   </div>
                 )}
@@ -248,6 +301,19 @@ const RoomPage: NextPage = () => {
                 )}
               </div>
             </div>
+            {roomInfoState.createdById === session?.user?.id && roomInfoState.gameStarted && (
+              <div className="lg:w-10/12 mx-auto flex items-center justify-center m-5">
+                <button
+                  className="btn btn-error"
+                  onClick={() => {
+                    deleteRoom.mutate({ roomId: roomid as string });
+                    router.push("/");
+                  }}
+                >
+                  End Game
+                </button>
+              </div>
+            )}
           </div>
           <div className="drawer-side">
             <label htmlFor="my-drawer-4" className="drawer-overlay"></label>

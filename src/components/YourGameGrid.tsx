@@ -1,5 +1,5 @@
 import produce from "immer";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import type { GameMoves, Rooms } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
@@ -11,25 +11,17 @@ const colors = ["", "#A5668B", "#FACFAD", "#F8BD7F", "#7DAF9C", "#95190C"];
 const YourGameGrid = ({
   movesList,
   roomInfoState,
+  grid,
+  setGrid,
 }: {
   movesList: GameMoves[] | undefined;
   roomInfoState: Room;
+  grid: number[][];
+  setGrid: Dispatch<SetStateAction<number[][]>>;
 }) => {
   const { data: session } = useSession();
   const win = trpc.rooms.winGame.useMutation();
   const hisOrMiss = trpc.game.hitOrMiss.useMutation();
-  const [grid, setGrid] = useState([
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 2, 2, 2, 2],
-    [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 5, 5, 5, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 3, 3, 3, 3, 0, 0],
-  ]);
 
   // const [editGrid, setEditGrid] = useState([
   //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

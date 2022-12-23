@@ -59,15 +59,21 @@ export const roomsRouter = router({
   deleteRoom: publicProcedure
     .input(
       z.object({
-        id: z.string().uuid().optional(),
+        roomId: z.string(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      await prisma.rooms.delete({
+      const room = await prisma.rooms.delete({
         where: {
-          id: input.id,
+          id: input.roomId,
         },
       });
+      await prisma.gameMoves.deleteMany({
+        where: {
+          roomId: input.roomId,
+        },
+      });
+      return room;
     }),
   joinRoom: publicProcedure
     .input(
@@ -116,7 +122,6 @@ export const roomsRouter = router({
               opponentName: input.opponentName,
             },
           });
-
         }
       } else {
         const room = await prisma.rooms.update({
@@ -291,6 +296,27 @@ export const roomsRouter = router({
         },
         data: {
           turn: input.turn,
+        },
+      });
+      ee.emit("roomInfoChange", room);
+      return room;
+    }),
+  kickOpponent: publicProcedure
+    .input(
+      z.object({
+        roomId: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      //check if user already has room created
+      const room = await prisma.rooms.update({
+        where: {
+          id: input.roomId,
+        },
+        data: {
+          opponentId: null,
+          opponentName: null,
+          opponentReady: false,
         },
       });
       ee.emit("roomInfoChange", room);
