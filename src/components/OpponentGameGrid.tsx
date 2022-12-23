@@ -2,7 +2,6 @@ import produce from "immer";
 import { useState, useEffect } from "react";
 import { GameMoves } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import { trpc } from "../utils/trpc";
 
 const getColor = (value: number) => {
   if (value === -2) {

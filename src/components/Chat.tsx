@@ -79,7 +79,6 @@ export default function Chat({ createdById }: { createdById: string }) {
   );
 
   const utils = trpc.useContext();
-  const { hasPreviousPage, isFetchingPreviousPage, fetchPreviousPage } = postsQuery;
 
   // list of messages that are rendered
   const [messages, setMessages] = useState(() => {

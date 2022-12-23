@@ -1,5 +1,5 @@
 import produce from "immer";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import type { GameMoves, Rooms } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";

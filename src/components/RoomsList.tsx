@@ -1,7 +1,6 @@
 import { trpc } from "../utils/trpc";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import type { User } from "next-auth/core/types";
 import { useRouter } from "next/router";
 

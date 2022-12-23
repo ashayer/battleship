@@ -1,4 +1,4 @@
-import { useSession, signIn } from "next-auth/react";
+import {  signIn } from "next-auth/react";
 
 const Unauthenticated = () => {
   return (

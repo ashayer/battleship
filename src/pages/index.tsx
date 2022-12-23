@@ -1,4 +1,4 @@
-import { SessionProviderProps, useSession } from "next-auth/react";
+import {  useSession } from "next-auth/react";
 import Head from "next/head";
 import RoomsList from "components/RoomsList";
 import Unauthenticated from "components/Unauthenticated";

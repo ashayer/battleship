@@ -34,7 +34,7 @@ export const roomsRouter = router({
         createdByImage: z.string(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       //check if user already has room created
       const hasRoom = await prisma.rooms.findFirst({
         where: {
@@ -62,7 +62,7 @@ export const roomsRouter = router({
         roomId: z.string(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       const room = await prisma.rooms.delete({
         where: {
           id: input.roomId,
@@ -84,7 +84,7 @@ export const roomsRouter = router({
         isJoining: z.boolean(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       const room = await prisma.rooms.findFirst({
         where: {
           id: input.roomId,
@@ -141,7 +141,7 @@ export const roomsRouter = router({
         createdById: z.string(),
       }),
     )
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input }) => {
       const roomsList = await prisma.rooms.findMany({
         orderBy: {
           createdAt: "desc",
@@ -176,7 +176,7 @@ export const roomsRouter = router({
         createdById: z.string(),
       }),
     )
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input }) => {
       const yourRoom = await prisma.rooms.findFirst({
         where: {
           createdById: {
@@ -206,7 +206,7 @@ export const roomsRouter = router({
         roomId: z.string(),
       }),
     )
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input}) => {
       const room = await prisma.rooms.findFirst({
         where: {
           id: input.roomId,
@@ -221,7 +221,7 @@ export const roomsRouter = router({
         gameStarted: z.boolean(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       const room = await prisma.rooms.update({
         where: {
           id: input.roomId,
@@ -242,7 +242,7 @@ export const roomsRouter = router({
         opponentReady: z.boolean(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       const room = await prisma.rooms.update({
         where: {
           id: input.roomId,
@@ -262,7 +262,7 @@ export const roomsRouter = router({
         winner: z.string(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       const room = await prisma.rooms.update({
         where: {
           id: input.roomId,
@@ -288,7 +288,7 @@ export const roomsRouter = router({
         turn: z.string(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       //check if user already has room created
       const room = await prisma.rooms.update({
         where: {
@@ -307,7 +307,7 @@ export const roomsRouter = router({
         roomId: z.string(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input}) => {
       //check if user already has room created
       const room = await prisma.rooms.update({
         where: {
