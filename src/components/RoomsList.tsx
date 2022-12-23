@@ -97,7 +97,7 @@ export default function RoomsList({ user }: { user: User }) {
           {!listOfRooms.isFetching && "Refresh rooms list"}
         </button>
       </div>
-      <section className="m-auto sm:w-11/12 px-4">
+      <section className="m-auto sm:w-11/12 lg:w-1/2 px-4">
         {yourRoom.data && (
           <div className="flex bg-zinc-800 place-items-center justify-between p-4 rounded-2xl">
             <Link

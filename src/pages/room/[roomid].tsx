@@ -201,7 +201,7 @@ const RoomPage: NextPage = () => {
               )}
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-y-8 gap-x-8 justify-evenly items-center lg:w-11/12 mx-auto p-5 border-2 border-red-500">
+            <div className="flex flex-col lg:flex-row gap-y-8 gap-x-8 justify-evenly items-center lg:w-11/12 mx-auto p-5">
               <YourGameGrid movesList={movesList} roomInfoState={roomInfoState} />
               {roomInfoState.gameStarted && (
                 <OpponentGameGrid

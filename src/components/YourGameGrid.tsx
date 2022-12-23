@@ -19,17 +19,33 @@ const YourGameGrid = ({
   const win = trpc.rooms.winGame.useMutation();
   const hisOrMiss = trpc.game.hitOrMiss.useMutation();
   const [grid, setGrid] = useState([
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 2, 2, 2, 2],
+    [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 5, 5, 5, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 3, 3, 3, 3, 0, 0],
   ]);
+
+  // const [editGrid, setEditGrid] = useState([
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  // ]);
+
+  // const [currentShip, setCurrentShip] = useState(0);
+  // const [isRotated, setIsRotated] = useState(false);
 
   async function winGame() {
     await win.mutateAsync({
@@ -73,8 +89,6 @@ const YourGameGrid = ({
             }
           }
         });
-        console.log(newGrid);
-
         checkIfWin(newGrid);
         setGrid(newGrid);
       }
@@ -83,7 +97,7 @@ const YourGameGrid = ({
   }, [grid, movesList, session?.user?.id]);
 
   return (
-    <div className="text-center mx-auto">
+    <div className="text-center mx-auto ">
       <div
         className="grid text-center"
         style={{
@@ -106,23 +120,82 @@ const YourGameGrid = ({
                   <div className="flex items-center justify-center">{rowIndex + 1}</div>
                 )}
                 <div
-                  role="button"
                   key={`${rowIndex}-${colIndex}`}
                   style={{
-                    backgroundColor:
-                      grid[rowIndex][colIndex] > 0 ? colors[grid[rowIndex][colIndex]] : "",
+                    backgroundColor: colors[grid[rowIndex][colIndex]],
                     border: grid[rowIndex][colIndex] > 0 ? "none" : "1px solid white",
                     aspectRatio: 1 / 1,
-                    cursor: "default",
                   }}
-                ></div>
+                  id={`${rowIndex}-${colIndex}`}
+                  // onMouseOver={(e) => {
+                  //   const idString = e.currentTarget.id;
+                  //   const row = parseInt(idString[0]);
+                  //   const col = parseInt(idString[2]);
+
+                  //   const newGrid = produce(editGrid, (gridCopy) => {
+                  //     gridCopy[row][col] = currentShip;
+                  //   });
+                  //   setEditGrid(newGrid);
+                  // }}
+                  // onMouseLeave={(e) => {
+                  //   const idString = e.currentTarget.id;
+                  //   const row = parseInt(idString[0]);
+                  //   const col = parseInt(idString[2]);
+                  //   const newGrid = produce(editGrid, (gridCopy) => {
+                  //     gridCopy[row][col] = 0;
+                  //   });
+                  //   setEditGrid(newGrid);
+                  // }}
+                />
               </>
             );
           }),
         )}
       </div>
+      {/* <div className="flex flex-col justify-between gap-y-10 mt-10">
+        <div className="flex justify-between">
+          <button className="btn" onClick={() => setCurrentShip(1)}>
+            1
+          </button>
+          <button className="btn" onClick={() => setCurrentShip(2)}>
+            2
+          </button>
+          <button className="btn" onClick={() => setCurrentShip(3)}>
+            3
+          </button>
+          <button className="btn" onClick={() => setCurrentShip(4)}>
+            4
+          </button>
+          <button className="btn" onClick={() => setCurrentShip(5)}>
+            5
+          </button>
+        </div>
+        <div>
+          <button className="btn" onClick={() => setIsRotated(!isRotated)}>
+            Rotate
+          </button>
+        </div>
+      </div> */}
     </div>
   );
 };
 
 export default YourGameGrid;
+
+// const newGrid = produce(editGrid, (gridCopy) => {
+//   if (isRotated) {
+//     for (let i = 0; i < currentShip; i += 1) {
+//       if (row + currentShip < 11) {
+//         gridCopy[row + i][col] = currentShip;
+//       }
+//     }
+//   } else {
+//     for (let i = 0; i < currentShip; i += 1) {
+//       if (col + currentShip < 11) {
+//         gridCopy[row][col + i] = currentShip;
+//       }
+//     }
+//   }
+// });
+// setEditGrid(newGrid);
+// console.log(newGrid);
