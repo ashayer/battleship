@@ -19,17 +19,30 @@ const RoomPage: NextPage = () => {
   const [roomInfoState, setRoomInfoState] = useState<Rooms>();
   const utils = trpc.useContext();
   const [movesList, setMovesList] = useState<GameMoves[] | undefined>();
+  // const [grid, setGrid] = useState([
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 1, 0, 0, 2, 2, 2, 2],
+  //   [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
+  //   [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
+  //   [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 1, 0, 0, 5, 5, 5, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  //   [0, 0, 0, 0, 3, 3, 3, 3, 0, 0],
+  // ]);
+
   const [grid, setGrid] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 2, 2, 2, 2],
-    [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 4, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 5, 5, 5, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 3, 3, 3, 3, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
 
   const roomInfo = trpc.rooms.getRoomInfo.useQuery(
@@ -47,6 +60,7 @@ const RoomPage: NextPage = () => {
 
   if (
     roomInfo.isSuccess &&
+    roomInfo.data &&
     roomInfo.data?.createdById !== session?.user?.id &&
     roomInfo.data?.opponentId !== session?.user?.id
   ) {
@@ -247,55 +261,82 @@ const RoomPage: NextPage = () => {
               <div className={`mx-auto ${roomInfoState.gameStarted ? "hidden" : "block"}`}>
                 {/* Stuff to show the room owner*/}
                 {session?.user?.id === roomInfoState.createdById && (
-                  <div>
-                    {roomInfoState.opponentId === null && (
-                      <div>Waiting for opponent to join...</div>
+                  <>
+                    {roomInfoState.winner !== null ? (
+                      <div className="lg:w-10/12 mx-auto flex items-center justify-center m-5">
+                        <button
+                          className="btn btn-error"
+                          onClick={() => {
+                            deleteRoom.mutate({ roomId: roomid as string });
+                            router.push("/");
+                          }}
+                        >
+                          End Game
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <div>
+                          {roomInfoState.opponentId === null && (
+                            <div>Waiting for opponent to join...</div>
+                          )}
+                          {roomInfoState.opponentId !== null &&
+                            !roomInfoState.opponentReady &&
+                            session?.user?.id === roomInfoState.createdById && (
+                              <div className="flex flex-col gap-y-10">
+                                Waiting for {roomInfoState.opponentName} to ready up...
+                                <button
+                                  className="btn btn-primary"
+                                  onClick={() => {
+                                    kickOpponent.mutate({ roomId: roomid as string });
+                                  }}
+                                >
+                                  Kick opponent?
+                                </button>
+                              </div>
+                            )}
+                          {!roomInfoState.gameStarted &&
+                            roomInfoState.opponentId !== null &&
+                            roomInfoState.opponentReady && (
+                              <div className="flex flex-col gap-y-10">
+                                <button
+                                  className="btn btn-success"
+                                  onClick={() => startTheGame(true)}
+                                >
+                                  Start Game
+                                </button>
+                                <button
+                                  className="btn btn-primary"
+                                  onClick={() => {
+                                    kickOpponent.mutate({ roomId: roomid as string });
+                                  }}
+                                >
+                                  Kick opponent?
+                                </button>
+                              </div>
+                            )}
+                        </div>
+                      </>
                     )}
-                    {roomInfoState.opponentId !== null &&
-                      !roomInfoState.opponentReady &&
-                      session?.user?.id === roomInfoState.createdById && (
-                        <div className="flex flex-col gap-y-10">
-                          Waiting for {roomInfoState.opponentName} to ready up...
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => {
-                              kickOpponent.mutate({ roomId: roomid as string });
-                            }}
-                          >
-                            Kick opponent?
-                          </button>
-                        </div>
-                      )}
-                    {!roomInfoState.gameStarted &&
-                      roomInfoState.opponentId !== null &&
-                      roomInfoState.opponentReady && (
-                        <div className="flex flex-col gap-y-10">
-                          <button className="btn btn-success" onClick={() => startTheGame(true)}>
-                            Start Game
-                          </button>
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => {
-                              kickOpponent.mutate({ roomId: roomid as string });
-                            }}
-                          >
-                            Kick opponent?
-                          </button>
-                        </div>
-                      )}
-                  </div>
+                  </>
                 )}
 
                 {/* Stuff to show the room opponent*/}
                 {session?.user?.id === roomInfoState.opponentId && (
                   <div>
-                    {!roomInfoState.gameStarted && !roomInfoState.opponentReady && (
-                      <button onClick={() => readyUpPlayer()} className="btn btn-success">
-                        Ready up
-                      </button>
-                    )}
-                    {!roomInfoState.gameStarted && roomInfoState.opponentReady && (
-                      <div>Waiting for {roomInfoState.createdByName} to start the game...</div>
+                    {roomInfoState.winner !== null ? (
+                      <>Game Over</>
+                    ) : (
+                      <>
+                        {!roomInfoState.gameStarted && !roomInfoState.opponentReady && (
+                          <button onClick={() => readyUpPlayer()} className="btn btn-success">
+                            Ready up
+                          </button>
+                        )}
+                        {!roomInfoState.gameStarted && roomInfoState.opponentReady && (
+                          <div>Waiting for {roomInfoState.createdByName} to start the game...</div>
+                        )}
+                      </>
                     )}
                   </div>
                 )}

@@ -39,11 +39,12 @@ const YourGameGrid = ({
   // const [currentShip, setCurrentShip] = useState(0);
   // const [isRotated, setIsRotated] = useState(false);
 
-  async function winGame() {
-    await win.mutateAsync({
+  function winGame() {
+    win.mutate({
       roomId: roomInfoState.id,
       winner: roomInfoState?.turn as string,
     });
+    
   }
 
   const checkIfWin = (gameGrid: number[][]) => {

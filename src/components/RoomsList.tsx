@@ -116,7 +116,7 @@ export default function RoomsList({ user }: { user: User }) {
               </p>
             </Link>
             <button
-              onClick={() => deleteRoom.mutateAsync({ id: yourRoom.data?.id as string })}
+              onClick={() => deleteRoom.mutateAsync({ roomId: yourRoom.data?.id as string })}
               title="Delete your room"
             >
               Delete Your Room
