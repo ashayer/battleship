@@ -44,7 +44,6 @@ const YourGameGrid = ({
       roomId: roomInfoState.id,
       winner: roomInfoState?.turn as string,
     });
-    
   }
 
   const checkIfWin = (gameGrid: number[][]) => {
@@ -119,25 +118,19 @@ const YourGameGrid = ({
                     border: grid[rowIndex][colIndex] > 0 ? "none" : "1px solid white",
                     aspectRatio: 1 / 1,
                   }}
-                  id={`${rowIndex}-${colIndex}`}
                   // onMouseOver={(e) => {
-                  //   const idString = e.currentTarget.id;
-                  //   const row = parseInt(idString[0]);
-                  //   const col = parseInt(idString[2]);
-
-                  //   const newGrid = produce(editGrid, (gridCopy) => {
-                  //     gridCopy[row][col] = currentShip;
-                  //   });
-                  //   setEditGrid(newGrid);
+                  //   setEditGrid(
+                  //     produce((draft) => {
+                  //       draft[rowIndex][colIndex] = currentShip;
+                  //     })
+                  //   );
                   // }}
-                  // onMouseLeave={(e) => {
-                  //   const idString = e.currentTarget.id;
-                  //   const row = parseInt(idString[0]);
-                  //   const col = parseInt(idString[2]);
-                  //   const newGrid = produce(editGrid, (gridCopy) => {
-                  //     gridCopy[row][col] = 0;
-                  //   });
-                  //   setEditGrid(newGrid);
+                  // onMouseOut={(e) => {
+                  //   setEditGrid(
+                  //     produce((draft) => {
+                  //       draft[rowIndex][colIndex] = 0;
+                  //     })
+                  //   );
                   // }}
                 />
               </>
