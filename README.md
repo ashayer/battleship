@@ -1,79 +1,35 @@
-# Prisma + tRPC + WebSockets
+<div align="center">
+ <img src="src/utils/ship.png" height="500" width="500"/>
+ 
+  <a href="https://ship.arandeep.com" target="_blank" rel="noopener noreferrer">Visit the site here!<a>
+ 
 
-Try demo http://websockets.trpc.io/
+# Battleship Clone
 
-## Features
-
-- 🧙‍♂️ E2E type safety with [tRPC](https://trpc.io)
-- ⚡ Full-stack React with Next.js
-- ⚡ WebSockets / Subscription support
-- ⚡ Database with Prisma
-- 🔐 Authorization using [next-auth](https://next-auth.js.org/)
-- ⚙️ VSCode extensions
-- 🎨 ESLint + Prettier
-- 💚 CI setup using GitHub Actions:
-  - ✅ E2E testing with [Playwright](https://playwright.dev/)
-  - ✅ Linting
+> This webapp is a clone of the battleship clone game with realtime turns and chat rooms.
+> 
+> Create your own rooms or join other.
 
 
-## Setup
+# Features
 
-```bash
-yarn create next-app --example https://github.com/trpc/trpc --example-path examples/next-prisma-starter-websockets trpc-prisma-starter-websockets
-cd trpc-prisma-starter-websockets
-yarn
-yarn dx
-```
+### Turn based game with live chat
 
-## Deployment
+A real time turn based battleship game that uses websockets for a responsive game experience. 
+    
+Chat with your opponent in real time in the private chats for each game room.
 
-### Using [Render](https://render.com/)
 
-The project contains a [`render.yaml`](./render.yaml) [*"Blueprint"*](https://render.com/docs/blueprint-spec) which makes the project easily deployable on [Render](https://render.com/).
+# Tech stack
 
-The database is setup with a `starter` plan, but you can use a free plan for 90 days.
+This project uses the [t3-stack template](https://github.com/t3-oss/create-t3-app). This stack provides a quick way to get started with a fully typesafe webapp. 
+ 
+For realtime updates and messages the [ws package](https://www.npmjs.com/package/ws) is used in a node server.
 
-Go to [dashboard.render.com/blueprints](https://dashboard.render.com/blueprints) and connect to this Blueprint and see how the app and database automatically gets deployed.
+The app is styled with [TailwindCSS](https://tailwindcss.com/) for quick inline styling.
 
-You will either need to create an environment group called `trpc-websockets` with environment variables or remove that from `render.yaml` in favor of manual environment variables that overrides the ones in `/.env`.
 
-## Files of note
 
-<table>
-  <thead>
-    <tr>
-      <th>Path</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><a href="./prisma/schema.prisma"><code>./prisma/schema.prisma</code></a></td>
-      <td>Prisma schema</td>
-    </tr>
-    <tr>
-      <td><a href="./src/api/trpc/[trpc].tsx"><code>./src/api/trpc/[trpc].tsx</code></a></td>
-      <td>tRPC response handler</td>
-    </tr>
-    <tr>
-      <td><a href="./src/server/routers"><code>./src/server/routers</code></a></td>
-      <td>Your app's different tRPC-routers</td>
-    </tr>
-  </tbody>
-</table>
+<br/><br/>
+</div>
 
-## Commands
-
-```bash
-pnpm build      # runs `prisma generate` + `prisma migrate` + `next build`
-pnpm db-nuke    # resets local db
-pnpm dev        # starts next.js + WebSocket server
-pnpm dx         # starts postgres db + runs migrations + seeds + starts next.js 
-pnpm test-dev   # runs e2e tests on dev
-pnpm test-start # runs e2e tests on `next start` - build required before
-pnpm test:unit  # runs normal jest unit tests
-pnpm test:e2e   # runs e2e tests
-```
----
-
-Created by [@alexdotjs](https://twitter.com/alexdotjs).
