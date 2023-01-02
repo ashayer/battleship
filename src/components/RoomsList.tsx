@@ -11,7 +11,7 @@ const CreateRoomForm = ({ createRoom, user }: { createRoom: any; user: User }) =
 
   async function addRoom() {
     const input = {
-      roompasscode: roomPasscode,
+      roompasscode: "roomPasscode",
       roomname: roomName,
       createdById: user.id,
       createdByName: user.name,
@@ -49,7 +49,7 @@ const CreateRoomForm = ({ createRoom, user }: { createRoom: any; user: User }) =
           className="input input-bordered"
           onChange={(e) => setRoomName(e.target.value)}
         />
-        <input
+        {/* <input
           type="text"
           name="passcode"
           id="passcode"
@@ -58,7 +58,7 @@ const CreateRoomForm = ({ createRoom, user }: { createRoom: any; user: User }) =
           required={isPrivate}
           className="input input-bordered"
           onChange={(e) => setRoomPasscode(e.target.value)}
-        />
+        /> */}
         <button className="btn ">Create room</button>
       </fieldset>
       {createRoom.error && <p style={{ color: "red" }}>{createRoom.error.message}</p>}
