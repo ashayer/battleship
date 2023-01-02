@@ -19,9 +19,12 @@ const Navbar = ({ session }: { session: Session }) => {
               <Image src={session.user?.image || ""} alt="Profile image" width={50} height={50} />
             </div>
           </label>
-          <ul className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
-            <li onClick={() => signOut()}>
-              <a>Logout</a>
+          <ul
+            tabIndex={0}
+            className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            <li>
+              <a onClick={() => signOut({ callbackUrl: "/" })}>Logout</a>
             </li>
           </ul>
         </div>
