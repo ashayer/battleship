@@ -189,6 +189,7 @@ export default function RoomsList({ user }: { user: User }) {
                   JOIN
                 </button>
               )}
+              {room.createdById !== room.opponentId && room.opponentId !== null && <p>ROOM FULL</p>}
             </div>
           </div>
         ))}
